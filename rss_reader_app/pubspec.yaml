@@ -1,0 +1,42 @@
+name: rss_reader_app
+description: A Flutter RSS reader application similar to bestblogs.dev
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+executables:
+  rss_reader_cli:
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.1
+
+  # XML parsing for RSS feeds
+  xml: ^6.5.0
+
+  # HTTP requests
+  http: ^1.2.2
+
+  # Local storage
+  hive: ^2.2.3
+  path_provider: ^2.1.1
+
+  # UI components
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

@@ -81,8 +81,10 @@ class FeedService {
         final items = <Article>[];
 
         // 尝试从RSS和Atom格式中提取文章
-        final entryElements = document.findAllElements('item') +
-            document.findAllElements('entry');
+        final entryElements = <xml.XmlElement>[
+          ...document.findAllElements('item'),
+          ...document.findAllElements('entry')
+        ];
 
         for (final item in entryElements) {
           try {
@@ -95,9 +97,11 @@ class FeedService {
 
             // 提取描述/内容
             String description = '';
-            final descriptionElements = item.findAllElements('description') +
-                item.findAllElements('summary') +
-                item.findAllElements('content');
+            final descriptionElements = <xml.XmlElement>[
+              ...item.findAllElements('description'),
+              ...item.findAllElements('summary'),
+              ...item.findAllElements('content')
+            ];
             if (descriptionElements.isNotEmpty) {
               description = descriptionElements.first.text.trim();
             }
@@ -118,9 +122,11 @@ class FeedService {
 
             // 提取发布日期
             DateTime pubDate = DateTime.now();
-            final dateElements = item.findAllElements('pubDate') +
-                item.findAllElements('published') +
-                item.findAllElements('updated');
+            final dateElements = <xml.XmlElement>[
+              ...item.findAllElements('pubDate'),
+              ...item.findAllElements('published'),
+              ...item.findAllElements('updated')
+            ];
             if (dateElements.isNotEmpty) {
               try {
                 pubDate = DateTime.parse(dateElements.first.text.trim());

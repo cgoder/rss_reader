@@ -19,7 +19,7 @@ class FeedProvider with ChangeNotifier {
 
   // 获取所有文章并按时间排序
   List<Article> get sortedArticles {
-    final sorted = List.from(_articles)..sort((a, b) => b.pubDate.compareTo(a.pubDate));
+    final sorted = List<Article>.from(_articles)..sort((a, b) => b.pubDate.compareTo(a.pubDate));
     return sorted;
   }
 

@@ -114,37 +114,11 @@ class _FeedListScreenState extends State<FeedListScreen> {
   }
 
   void _showAddFeedDialog() async {
-    String feedUrl = '';
-
     await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('添加订阅源'),
-          content: TextField(
-            decoration: const InputDecoration(
-              labelText: 'RSS地址',
-              hintText: '输入RSS源URL',
-            ),
-            onChanged: (value) {
-              feedUrl = value.trim();
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: feedUrl.isEmpty
-                  ? null
-                  : () async {
-                      Navigator.pop(context);
-                      await _addFeed(feedUrl);
-                    },
-              child: const Text('添加'),
-            ),
-          ],
+        return _AddFeedDialog(
+          onAddFeed: _addFeed,
         );
       },
     );
@@ -201,5 +175,78 @@ class _FeedListScreenState extends State<FeedListScreen> {
         );
       },
     );
+  }
+}
+
+// 单独的StatefulWidget用于添加订阅源对话框
+class _AddFeedDialog extends StatefulWidget {
+  final Future<void> Function(String url) onAddFeed;
+
+  const _AddFeedDialog({required this.onAddFeed});
+
+  @override
+  _AddFeedDialogState createState() => _AddFeedDialogState();
+}
+
+class _AddFeedDialogState extends State<_AddFeedDialog> {
+  final TextEditingController _controller = TextEditingController();
+  bool _isInputValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_handleTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTextChanged() {
+    final text = _controller.text.trim();
+    setState(() {
+      _isInputValid = text.isNotEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('添加订阅源'),
+      content: TextField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: 'RSS地址',
+          hintText: '输入RSS源URL',
+        ),
+        keyboardType: TextInputType.url,
+        textInputAction: TextInputAction.done,
+        onSubmitted: (value) {
+          if (_isInputValid) {
+            _addFeedAndClose();
+          }
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+        TextButton(
+          onPressed: _isInputValid ? _addFeedAndClose : null,
+          child: const Text('添加'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _addFeedAndClose() async {
+    final url = _controller.text.trim();
+    if (url.isNotEmpty) {
+      Navigator.pop(context); // 关闭对话框
+      await widget.onAddFeed(url);
+    }
   }
 }
